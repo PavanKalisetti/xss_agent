@@ -14,7 +14,7 @@ class DeepSeekWrapper:
     
     def analyze_inputs(self, context):
         """Ask LLM to prioritize input points"""
-        print("in the analyze inputes")
+        print("in the analyze inputs")
         try:
             response = self.client.chat.completions.create(
                 model="deepseek-chat",
@@ -22,53 +22,45 @@ class DeepSeekWrapper:
                     {
                         "role": "system",
                         "content": """
-                                You are a cybersecurity expert specializing in web application vulnerabilities.Generate response in the following example in this strict format:
-                                
-                                ```[
-                                            {
-                                            "vector_type": "URL parameters",
-                                            "name": "searchFor",
-                                            "priority": 1,
-                                            
-                                            },
-                                            {
-                                            "vector_type": "Form fields without CSRF tokens",
-                                            "name": "searchFor",
-                                            "priority": 2,
-                                            
-                                            },
-                                            {
-                                            "vector_type": "Headers like User-Agent or Referer",
-                                            "name": "User-Agent/Referer",
-                                            "priority": 3,
-                                            }
-                                        ]
-                                        ```
-                                
-                            
-                            """
-
+                        You are a cybersecurity expert specializing in web application vulnerabilities, particularly XSS.
+                        
+                        You MUST respond in this exact JSON format, without any additional text or explanation:
+                        [
+                            {
+                                "vector_type": "URL parameters",
+                                "name": "parameter_name",
+                                "priority": 1
+                            }
+                        ]
+                        
+                        Rules for response:
+                        1. Only use these vector_type values:
+                        - "URL parameters"
+                        - "Form fields without CSRF tokens"
+                        - "Headers like User-Agent or Referer"
+                        2. Priority should be a number (1 is highest priority)
+                        3. Name should be the actual parameter/field name found
+                        4. Do not add any markdown, explanation, or additional text
+                        5. Ensure valid JSON format with no trailing commas
+                        """
                     },
                     {
                         "role": "user", 
-                        "content": f""" As a security researcher, analyze this web application context:
+                        "content": f"""Analyze this web application context and return ONLY the JSON array of input vectors:
                             {context}
 
-                            List all user-controllable input vectors vulnerable to Reflected XSS, 
-                            ordered by priority (most likely to least likely). Focus on:
+                            Consider:
                             - URL parameters
                             - Form fields without CSRF tokens
                             - Headers like User-Agent or Referer
-
-                                """
+                            
+                            Return ONLY the JSON array.
+                        """
                     }
                 ]
             )
-            # Accessing the content of the first choice
             content = response.choices[0].message.content
-            
-            print("\n\nFiltered Response Content:\n", content)
-            return content  # Return the filtered content
+            return content
         except Exception as e:
             print(f"DeepSeek API Error: {e}")
             return None
