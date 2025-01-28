@@ -135,15 +135,10 @@ def stage3_payload_injection(target_url, input_vectors):
     browser.keep_alive()
 
 if __name__ == "__main__":  
-    target = "http://testphp.vulnweb.com/search.php?searchFor=test"
-    # target = "https://prompt.ml/0"
+    # target = "http://testphp.vulnweb.com/search.php?searchFor=test"
+    target = "https://brokencrystals.com/"
     
-    # Example input vector from Stage 1
-    test_vector = {
-        "vector_type": "URL parameters",
-        "name": "searchFor",
-        "priority": 1
-    }
+    
     
     # generated_vector = stage1_live_analysis(target)
     # input_vector = ensure_dict(generated_vector)

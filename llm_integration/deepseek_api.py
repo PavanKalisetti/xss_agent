@@ -12,8 +12,10 @@ class DeepSeekWrapper:
         )
     
     
+
+
+
     def analyze_inputs(self, context):
-        """Ask LLM to prioritize input points"""
         print("in the analyze inputs")
         try:
             response = self.client.chat.completions.create(
@@ -69,7 +71,6 @@ class DeepSeekWrapper:
         
 
     def generate_payloads(self, input_vector):
-        """Generate XSS payloads using DeepSeek's API"""
         try:
             response = self.client.chat.completions.create(
                 model="deepseek-chat",
